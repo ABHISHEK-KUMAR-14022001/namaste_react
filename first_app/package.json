@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel -D index.html"
+    "build": "parcel build index.html"
   },
   "author": "abhishek",
   "license": "ISC",
