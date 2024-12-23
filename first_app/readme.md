@@ -33,3 +33,5 @@ Installs Parcel (a bundler for your code) as a devDependency (-D flag) in your p
 npx parcel index.html:
 
 Runs Parcel bundler using npx (which comes with npm) and starts a development server by bundling and serving your index.html file. This allows you to view your app in the browser.
+
+![Alt text](image.png)🚀
