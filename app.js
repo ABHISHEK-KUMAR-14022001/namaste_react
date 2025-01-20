@@ -11,4 +11,3 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(jsxparent);
 =======
 root.render();
->>>>>>> 410f5a3f2522a834097e6875e25372c4c70f99e0:first_app/app.js
