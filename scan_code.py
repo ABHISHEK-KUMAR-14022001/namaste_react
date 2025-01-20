@@ -2,7 +2,7 @@ import requests
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 # Replace with your Hugging Face API key
-HUGGINGFACE_API_KEY = 'your_huggingface_api_key'
+HUGGINGFACE_API_KEY = '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'
 MODEL_NAME = 'openbmb/MiniCPM-o-2_6'
 
 def scan_code_for_bugs(code_snippet):
