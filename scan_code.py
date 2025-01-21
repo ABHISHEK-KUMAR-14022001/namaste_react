@@ -1,4 +1,5 @@
 import os
+import sys  # Import sys module to use sys.argv
 import openai
 
 # Set the API key directly in the environment
@@ -6,7 +7,6 @@ os.environ["OPENAI_API_KEY"] = "sk-proj--BWkUHNW6hH1LfWzcOx_iIbT--ED49y552xjR-b6
 
 # Assign it to the OpenAI client
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
 
 def scan_code(file_content):
     """Scan the code for issues using OpenAI."""
