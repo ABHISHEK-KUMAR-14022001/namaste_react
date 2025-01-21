@@ -10,12 +10,17 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def scan_code(file_content):
     """Scan the code for issues using OpenAI."""
+    # Modify prompt for better detection of issues in React code
     response = openai.Completion.create(
         engine="text-davinci-003",  # Codex or GPT model
-        prompt=f"Analyze the following code for syntax errors and improvements:\n\n{file_content}",
-        max_tokens=300,
-        temperature=0
+        prompt=f"Analyze the following React code for syntax errors, incorrect imports, or potential improvements:\n\n{file_content}",
+        max_tokens=500,  # Increase token limit to allow more detailed analysis
+        temperature=0.1  # Make the model more deterministic
     )
+    
+    # Log the raw response for debugging
+    print("OpenAI Response:", response.choices[0].text.strip())  # Debugging line
+    
     return response.choices[0].text.strip()
 
 def scan_repository(repo_path):
@@ -25,10 +30,10 @@ def scan_repository(repo_path):
         for file in files:
             if file.endswith(('.py', '.js', '.jsx')):  # Adjust extensions as needed
                 file_path = os.path.join(root, file)
-                with open(file_path, 'r') as f:
+                with open(file_path, 'r', encoding='utf-8') as f:  # Ensure proper encoding
                     content = f.read()
                     result = scan_code(content)
-                    if "error" in result.lower():
+                    if result:  # If there are any suggestions or issues found
                         issues.append((file_path, result))
     return issues
 
@@ -39,6 +44,7 @@ if __name__ == "__main__":
 
     repo_path = sys.argv[1]
     found_issues = scan_repository(repo_path)
+    
     if found_issues:
         print("Issues found:")
         for file_path, issue in found_issues:
