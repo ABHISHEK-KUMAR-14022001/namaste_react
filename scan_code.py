@@ -4,11 +4,9 @@ import git  # We will use GitPython to clone the repo
 import openai
 import shutil
 
-# Set the API key directly in the environment
-os.environ["OPENAI_API_KEY"] = "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"
+# Get the API key from the environment variable
+openai.api_key = os.getenv("OPENAI_API_KEY")  # No hardcoded API key here
 
-# Assign it to the OpenAI client
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def scan_code(file_content):
     """Scan the code for issues using OpenAI."""
