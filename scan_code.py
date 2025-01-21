@@ -1,6 +1,8 @@
 import os
-import sys  # Import sys module to use sys.argv
+import sys
+import git  # We will use GitPython to clone the repo
 import openai
+import shutil
 
 # Set the API key directly in the environment
 os.environ["OPENAI_API_KEY"] = "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"
@@ -23,9 +25,20 @@ def scan_code(file_content):
     
     return response.choices[0].text.strip()
 
-def scan_repository(repo_path):
-    """Scan all files in the specified repository path."""
+def scan_repository(repo_url):
+    """Clone the repository and scan all files in the repository path."""
+    repo_name = repo_url.split('/')[-1].replace('.git', '')
+    repo_path = os.path.join(os.getcwd(), repo_name)
+
+    # Clone the repository to the current working directory
+    if not os.path.exists(repo_path):
+        print(f"Cloning the repository {repo_url}...")
+        git.Repo.clone_from(repo_url, repo_path)
+    else:
+        print(f"Repository already exists at {repo_path}")
+
     issues = []
+    # Walk through the repository and scan relevant files
     for root, _, files in os.walk(repo_path):
         for file in files:
             if file.endswith(('.py', '.js', '.jsx')):  # Adjust extensions as needed
@@ -35,15 +48,19 @@ def scan_repository(repo_path):
                     result = scan_code(content)
                     if result:  # If there are any suggestions or issues found
                         issues.append((file_path, result))
+
+    # Clean up by deleting the cloned repo (optional)
+    shutil.rmtree(repo_path)
+    
     return issues
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python3 scan_code.py <repo_path>")
+        print("Usage: python3 scan_code.py <repo_url>")
         sys.exit(1)
 
-    repo_path = sys.argv[1]
-    found_issues = scan_repository(repo_path)
+    repo_url = sys.argv[1]
+    found_issues = scan_repository(repo_url)
     
     if found_issues:
         print("Issues found:")
