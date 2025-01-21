@@ -7,4 +7,4 @@ const jsxparent = <h1 id="heading">Hi Ayush & Om 🎄🎈</h1>;
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-root.render(parent);
+.render(parent);
