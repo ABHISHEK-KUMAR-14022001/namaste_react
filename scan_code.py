@@ -5,7 +5,7 @@ import openai
 import shutil
 
 # Set the API key directly in the environment
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 
 # Assign it to the OpenAI client
 openai.api_key = os.getenv("OPENAI_API_KEY")
