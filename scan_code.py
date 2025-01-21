@@ -1,39 +1,47 @@
-import requests
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
+import os
+import openai
 
-# Replace with your Hugging Face API key
-HUGGINGFACE_API_KEY = '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'
-MODEL_NAME = 'openbmb/MiniCPM-o-2_6'
+# Set the API key directly in the environment
+os.environ["OPENAI_API_KEY"] = "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"
 
-def scan_code_for_bugs(code_snippet):
-    headers = {
-        'Authorization': f'Bearer {HUGGINGFACE_API_KEY}'
-    }
-    
-    # Initialize model and tokenizer from Hugging Face
-    model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-    
-    # Tokenize the JavaScript code snippet
-    inputs = tokenizer(code_snippet, return_tensors="pt", truncation=True, padding=True, max_length=512)
-    
-    # Get predictions
-    outputs = model(**inputs)
-    logits = outputs.logits
-    predicted_class = logits.argmax().item()
-    
-    return predicted_class  # You can map predicted_class to bug/error categories if needed
+# Assign it to the OpenAI client
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-if __name__ == '__main__':
-    # Example JavaScript code snippet from repo
-    code_snippet = """
-    function buggyFunction() {
-        var a = 1;
-        var b = "string";
-        return a + b;  // This will cause a type error
-    }
-    """
-    
-    # Call the function to scan the code
-    result = scan_code_for_bugs(code_snippet)
-    print("Scan result:", result)
+
+def scan_code(file_content):
+    """Scan the code for issues using OpenAI."""
+    response = openai.Completion.create(
+        engine="text-davinci-003",  # Codex or GPT model
+        prompt=f"Analyze the following code for syntax errors and improvements:\n\n{file_content}",
+        max_tokens=300,
+        temperature=0
+    )
+    return response.choices[0].text.strip()
+
+def scan_repository(repo_path):
+    """Scan all files in the specified repository path."""
+    issues = []
+    for root, _, files in os.walk(repo_path):
+        for file in files:
+            if file.endswith(('.py', '.js', '.jsx')):  # Adjust extensions as needed
+                file_path = os.path.join(root, file)
+                with open(file_path, 'r') as f:
+                    content = f.read()
+                    result = scan_code(content)
+                    if "error" in result.lower():
+                        issues.append((file_path, result))
+    return issues
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python3 scan_code.py <repo_path>")
+        sys.exit(1)
+
+    repo_path = sys.argv[1]
+    found_issues = scan_repository(repo_path)
+    if found_issues:
+        print("Issues found:")
+        for file_path, issue in found_issues:
+            print(f"File: {file_path}\nIssue: {issue}\n")
+    else:
+        print("No issues detected.")
