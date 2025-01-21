@@ -12,11 +12,12 @@ def scan_code(file_content):
     """Scan the code for issues using OpenAI."""
     # Modify prompt for better detection of issues in React code
     response = openai.Completion.create(
-        engine="text-davinci-003",  # Codex or GPT model
-        prompt=f"Analyze the following React code for syntax errors, incorrect imports, or potential improvements:\n\n{file_content}",
-        max_tokens=500,  # Increase token limit to allow more detailed analysis
-        temperature=0.1  # Make the model more deterministic
-    )
+    engine="gpt-3.5-turbo",  # Updated model
+    prompt=f"Analyze the following React code for syntax errors, incorrect imports, or potential improvements:\n\n{file_content}",
+    max_tokens=500,  # Increase token limit to allow more detailed analysis
+    temperature=0.1  # Make the model more deterministic
+)
+
     
     # Log the raw response for debugging
     print("OpenAI Response:", response.choices[0].text.strip())  # Debugging line
